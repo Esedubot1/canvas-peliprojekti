@@ -5,10 +5,20 @@ canvas.height = 600
 
 const scoreDisplay = document.querySelector('#score')
 const healthDisplay = document.querySelector('#health')
+const timerDisplay = document.querySelector('#timer')
+const highScoreDisplay = document.querySelector('#highScore')
+
+if(!localStorage.getItem('highScore')) {
+  localStorage.setItem('highScore', 0)
+}
 
 let score = 0
-let hp = 3
+let hp = 2
+let timer
+
+scoreDisplay.innerHTML = `Score: ${score}`
 healthDisplay.innerHTML = '❤'.repeat(hp)
+highScoreDisplay.innerHTML = `Highscore: ${localStorage.getItem('highScore')}`
 
 class Circle {
   constructor(x, y) {
@@ -50,11 +60,19 @@ function randomize() {
 }
 
 function fail() {
-  alert(`You failed! Final score: ${score}`)
+  clearInterval(timer)
+  timerDisplay.innerHTML = null
+
+  alert(`Final score: ${score}`)
+
+  if(score > localStorage.getItem('highScore')) {
+    localStorage.setItem('highScore', score)
+    highScoreDisplay.innerHTML = `Highscore: ${localStorage.getItem('highScore')}`
+  }
 
   score = 0
   scoreDisplay.innerHTML = `Score: ${score}`
-  hp = 3
+  hp = 2
   healthDisplay.innerHTML = '❤'.repeat(hp)
 
   current = null
@@ -79,6 +97,18 @@ function click(canvas, e) {
       fail()
       return
     }
+  } else {
+    let time = 10
+    timerDisplay.innerHTML = `${time}`
+    timer = setInterval(() => {
+      time = time - 1
+      timerDisplay.innerHTML = `${time}`
+
+      if(time === 0) {
+        fail()
+        return
+      }
+    }, 1000)
   }
 
   randomize()
