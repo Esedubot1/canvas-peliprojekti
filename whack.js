@@ -3,6 +3,13 @@ const ctx = canvas.getContext('2d')
 canvas.width = 600
 canvas.height = 600
 
+const scoreDisplay = document.querySelector('#score')
+const healthDisplay = document.querySelector('#health')
+
+let score = 0
+let hp = 3
+healthDisplay.innerHTML = '❤'.repeat(hp)
+
 class Circle {
   constructor(x, y) {
     this.x = x
@@ -38,8 +45,23 @@ function randomize() {
   circles.forEach(circle => circle.color = '#cccccc')
   const rng = Math.floor(Math.random() * (9))
   current = circles[rng]
-  circles[rng].color = '#00eeee'
+  circles[rng].color = '#ff0000'
   circles.forEach(circle => circle.draw())
+}
+
+function fail() {
+  alert(`You failed! Final score: ${score}`)
+
+  score = 0
+  scoreDisplay.innerHTML = `Score: ${score}`
+  hp = 3
+  healthDisplay.innerHTML = '❤'.repeat(hp)
+
+  current = null
+  circles.forEach(circle => {
+    circle.color = '#cccccc'
+    circle.draw()
+  })
 }
 
 function click(canvas, e) {
@@ -47,8 +69,16 @@ function click(canvas, e) {
   const x = e.clientX - rect.left
   const y = e.clientY - rect.top
 
-  if(current && x <= current.x + 100 && x >= current.x - 100 && y <= current.y + 100 && y >= current.y - 100) {
-    console.log('current: ' + current.y)
+  if (current && x <= current.x + 100 && x >= current.x - 100 && y <= current.y + 100 && y >= current.y - 100) {
+    score++
+    scoreDisplay.innerHTML = `Score: ${score}`
+  } else if (current) {
+    hp = hp - 1
+    healthDisplay.innerHTML = '❤'.repeat(hp)
+    if (hp === 0) {
+      fail()
+      return
+    }
   }
 
   randomize()
