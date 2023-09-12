@@ -3,8 +3,8 @@ const ctx = canvas.getContext('2d')
 canvas.width = 600
 canvas.height = 600
 
-var audio = new Audio("vineboom.mp3");
-audio.load;
+const audio = new Audio('vineboom.mp3')
+audio.volume = 0.5
 
 const explosionImage = new Image()
 explosionImage.src = 'explosion.png'
@@ -120,8 +120,8 @@ function click(canvas, e) {
     scoreDisplay.innerHTML = `Score: ${score}`
     previous = current
     frameN = 0
-    audio.play();
-  audio.currentTime = 0;
+    audio.currentTime = 0
+    audio.play()
   } else if (current) {
     hp = hp - 1
     healthDisplay.innerHTML = '❤'.repeat(hp)
