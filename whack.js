@@ -23,7 +23,7 @@ const frames = [
   { x: 400, y: 600 },
   { x: 600, y: 600 }
 ]
-let frameN = 0
+let frameN
 
 const scoreDisplay = document.querySelector('#score')
 const healthDisplay = document.querySelector('#health')
