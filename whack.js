@@ -3,6 +3,28 @@ const ctx = canvas.getContext('2d')
 canvas.width = 600
 canvas.height = 600
 
+const explosionImage = new Image()
+explosionImage.src = 'explosion.png'
+const frames = [
+  { x: 0, y: 0 },
+  { x: 200, y: 0 },
+  { x: 400, y: 0 },
+  { x: 600, y: 0 },
+  { x: 0, y: 200 },
+  { x: 200, y: 200 },
+  { x: 400, y: 200 },
+  { x: 600, y: 200 },
+  { x: 0, y: 400 },
+  { x: 200, y: 400 },
+  { x: 400, y: 400 },
+  { x: 600, y: 400 },
+  { x: 0, y: 600 },
+  { x: 200, y: 600 },
+  { x: 400, y: 600 },
+  { x: 600, y: 600 }
+]
+let frameN = 0
+
 const scoreDisplay = document.querySelector('#score')
 const healthDisplay = document.querySelector('#health')
 const timerDisplay = document.querySelector('#timer')
@@ -47,16 +69,19 @@ const circle9 = new Circle(500, 500)
 
 const circles = [circle1, circle2, circle3, circle4, circle5, circle6, circle7, circle8, circle9]
 
+let previous = null
 let current = null
 
-circles.forEach(circle => circle.draw())
+animate()
 
 function randomize() {
   circles.forEach(circle => circle.color = '#cccccc')
-  const rng = Math.floor(Math.random() * (9))
+  let rng = Math.floor(Math.random() * (9))
+  while(rng === circles.indexOf(current)) {
+    rng = Math.floor(Math.random() * (9))
+  }
   current = circles[rng]
   circles[rng].color = '#ff0000'
-  circles.forEach(circle => circle.draw())
 }
 
 function fail() {
@@ -90,6 +115,8 @@ function click(canvas, e) {
   if (current && x <= current.x + 100 && x >= current.x - 100 && y <= current.y + 100 && y >= current.y - 100) {
     score++
     scoreDisplay.innerHTML = `Score: ${score}`
+    previous = current
+    frameN = 0
   } else if (current) {
     hp = hp - 1
     healthDisplay.innerHTML = '❤'.repeat(hp)
@@ -112,6 +139,21 @@ function click(canvas, e) {
   }
 
   randomize()
+}
+
+function animate() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height)
+  circles.forEach((circle) => circle.draw())
+
+  if(previous) {
+    frameN++
+
+    if(frameN < 16) {
+      ctx.drawImage(explosionImage, frames[frameN].x, frames[frameN].y, 200, 200, previous.x - 100, previous.y - 100, 200, 200)
+    }
+  }
+
+  requestAnimationFrame(animate)
 }
 
 canvas.addEventListener('mousedown', function(e) {
